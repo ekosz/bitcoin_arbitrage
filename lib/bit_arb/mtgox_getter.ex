@@ -1,12 +1,27 @@
 defmodule BitArb.MtgoxGetter do
+  @moduledoc """
+  This module is in charge of creating requests that can be sent
+  out to the MtGox bitcoin market.
+  """
+
   require Lager
 
   @base_url 'http://data.mtgox.com/api/2/'
   @ticker '/money/ticker'
 
-  def signed_request(path, getter // BitArb.JSONGetter) do
+  @doc """
+  Creates a request that is signed with special headers
+  that help authenticate with the MtGox service.  This
+  function requires that the `:mtgox_key` and the `:mtgox_secret`
+  are set in the application environment variables.
+
+  ## Example:
+
+      ticker = signed_request('BTCUSD/money/ticker', 'nonce=123')
+
+  """
+  def signed_request(path, body, getter // BitArb.JSONGetter) do
     url       = @base_url ++ path
-    body      = nonce
     hash_data = path ++ [0] ++ body
     secret    = :base64.decode_to_string(mtgox_secret)
     hmac      = :base64.encode_to_string(:hmac.hmac512(secret, hash_data))
@@ -16,6 +31,16 @@ defmodule BitArb.MtgoxGetter do
     getter.post(url, body, headers)["data"]
   end
 
+  @doc """
+  A helper method for making signed requests to
+  '/BTC#{symbol}/money/ticker'. It can take a currency in
+  the form of a atom or a binary string.
+
+  ## Example:
+
+      sell_price = btc_to("USD")[:sell]
+
+  """
   def btc_to(symbol, json_getter // BitArb.JSONGetter) do
     do_btc_to symbol, json_getter
   end
@@ -29,7 +54,7 @@ defmodule BitArb.MtgoxGetter do
   end
 
   defp do_btc_to(symbol, getter) do
-    data = signed_request('BTC' ++ symbol ++ @ticker, getter)
+    data = signed_request('BTC' ++ symbol ++ @ticker, nonce, getter)
 
     Enum.reduce data, [], fn({type, values}, acc) ->
       add_type_to_acc(acc, type, values)
