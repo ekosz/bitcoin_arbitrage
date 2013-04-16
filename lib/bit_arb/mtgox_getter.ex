@@ -33,7 +33,7 @@ defmodule BitArb.MtgoxGetter do
 
   @doc """
   A helper method for making signed requests to
-  '/BTC#{symbol}/money/ticker'. It can take a currency in
+  '/BTC<symbol>/money/ticker'. It can take a currency in
   the form of a atom or a binary string.
 
   ## Example:
