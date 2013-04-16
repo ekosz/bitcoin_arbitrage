@@ -1,6 +1,14 @@
 defmodule BitArb.JSONGetter do
+  @moduledoc """
+  Provides a wrapper around the erlang :httpc module.  It is in
+  charge of making HTTP requests to JSON services.  It parses
+  the returned JSON into Erlang tuples.
+  """
   require Lager
 
+  @doc """
+  Performs a GET request to a given url endpoint
+  """
   def get(url, http // :httpc) do
     do_get(url, http)
   end
@@ -15,6 +23,10 @@ defmodule BitArb.JSONGetter do
                                  [{:body_format, :binary}])
   end
 
+  @doc """
+  Performs a POST request to a given url endpoint. It also takes a
+  payload body and headers.
+  """
   def post(url, data, headers, http // :httpc) do
     handle_response http.request(:post, {url, headers, 'application/x-www-form-urlencoded; charset=UTF-8', data},
                                  [{:timeout, 3000}, {:connect_timeout, 3000}, {:ssl,[{:verify,0}]}],
