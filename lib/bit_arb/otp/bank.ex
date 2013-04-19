@@ -3,7 +3,7 @@ defmodule BitArb.OTP.Bank do
 
   defrecord State, holdings: []
 
-  import BitArb.Bank, only: [find_holding: 2, retrive_amount_from_holding: 4,
+  import BitArb.Bank, only: [find_holding: 2, retrieve_amount_from_holding: 4,
                              put_amount_into_holding: 4, value_of_holdings: 2]
 
   ## API
@@ -55,7 +55,7 @@ defmodule BitArb.OTP.Bank do
   def handle_call({:buy_btc_from, symbol, amount}, _from, State[holdings: holdings] = state) do
     buy_price = BitArb.OTP.MtgoxPoller.price(symbol)[:buy]
 
-    {reply, new_holdings} = retrive_amount_from_holding(holdings, symbol, buy_price, amount)
+    {reply, new_holdings} = retrieve_amount_from_holding(holdings, symbol, buy_price, amount)
 
     {:reply, reply, state.holdings(new_holdings)}
   end
