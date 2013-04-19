@@ -19,9 +19,31 @@ Lets say we have three numbers
 
 Now in a perfect economy all of these currencies would have the same value to
 one another, but if you look closely the current Bitcoin to EUR is under priced
-by €10!  This is an arbitrage opportunity.  We can safely say that the
-market is going to want to balance itself. If the other exchange rates stay
-content then the Bitcoin to EUR will eventually rise to €70.
-
+by €10!  This is an arbitrage opportunity.  We can safely say that the market
+is going to want to balance itself. If the other exchange rates stay content
+then the Bitcoin to EUR will eventually rise to €70.
 
 What this program does is try and find these imbalances and capitalize on them.
+
+Buy Signal
+---------
+
+If we find a under priced conversion and we predict it will rise more than 3.6%
+(3 times the assumed trading fee for going in and out).  If we predict it will
+rise more than four times our trading fee (4.8%) then we invest more money into
+the trade as its safer.
+
+Sell Signal
+-----------
+
+If the conversion rises to one third of our initial prediction, or falls in
+price 10% (a stop loss). This algorithm trades very safely.  These numbers can
+be tweaked to have a higher risk / higher reward.
+
+Third Part Dependencies
+-----------------------
+
+Currently this program is limited to the [MtGox bitcoin
+exchange](https://mtgox.com/) and grabs its global exchanges rates from [Open
+Exchange Rates](https://openexchangerates.org/). API keys and secrets must be
+set in the `mix.exs` for the program to run properly.
