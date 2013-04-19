@@ -6,7 +6,6 @@ defmodule BitArb do
   application and its Dynamos.
   """
   def start(_type, _args) do
-    :inets.start()
     BitArbSup.start_link
   end
 

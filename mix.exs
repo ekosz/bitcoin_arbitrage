@@ -9,7 +9,7 @@ defmodule BitArb.Mixfile do
 
   # Configuration for the OTP application
   def application do
-    [ applications: [:exlager],
+    [ applications: [:exlager, :inets],
       registered: [:bit_arb],
       env: [ {:open_exchange_api_key, 'OPEN_EXCHANGE_API_KEY'},
              {:mtgox_key, 'MTGOX_KEY'},
