@@ -47,3 +47,13 @@ Currently this program is limited to the [MtGox bitcoin
 exchange](https://mtgox.com/) and grabs its global exchanges rates from [Open
 Exchange Rates](https://openexchangerates.org/). API keys and secrets must be
 set in the `mix.exs` for the program to run properly.
+
+Installation
+-----------
+
+1. Make sure Erlang and Elixir are installed
+2. Clone this repo: `git clone https://github.com/ekosz/bitcoin_arbitrage.git`
+3. Move into the directory: `cd bitcoin_arbitrge`
+4. Install the dependencies: `mix deps.get`
+5. Set your credentials in `mix.exs`
+6. Run the program: `iex -S mix`
