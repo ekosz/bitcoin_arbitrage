@@ -29,14 +29,14 @@ defmodule BitArb.Bank do
   ## Example:
 
       {{:ok, buy_price, amount_bought}, updated_holdings} =
-        retrive_amount_from_holding(holdings, currency, buy_price, amount_to_purchase)
+        retrieve_amount_from_holding(holdings, currency, buy_price, amount_to_purchase)
 
   """
-  def retrive_amount_from_holding(holdings, symbol, buy_price, amount) when is_binary(symbol) do
-    retrive_amount_from_holding holdings, binary_to_atom(symbol), buy_price, amount
+  def retrieve_amount_from_holding(holdings, symbol, buy_price, amount) when is_binary(symbol) do
+    retrieve_amount_from_holding holdings, binary_to_atom(symbol), buy_price, amount
   end
 
-  def retrive_amount_from_holding(holdings, symbol, buy_price, amount) when is_atom(symbol) do
+  def retrieve_amount_from_holding(holdings, symbol, buy_price, amount) when is_atom(symbol) do
     if holdings[symbol] > amount do
       amount_bought = amount / buy_price
       reply = {:ok, buy_price, amount_bought}

@@ -11,13 +11,13 @@ defmodule BitArb.OTP.DirectionPredictor do
     test_ratio = BitArb.OTP.ExchangeRatePoller.rate(to)
     ratio = test_ratio / base_ratio
 
-    base_price = retrive_price from, :buy
-    test_price = retrive_price to,   :sell
+    base_price = retrieve_price from, :buy
+    test_price = retrieve_price to,   :sell
 
     equate(base_price, ratio, test_price)
   end
 
-  defp retrive_price(symbol, type) do
+  defp retrieve_price(symbol, type) do
     prices    = BitArb.OTP.MtgoxPoller.price(symbol)
     now       = BitArb.now_in_millseconds
     then      = prices[:last_updated] / 1000
