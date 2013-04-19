@@ -16,30 +16,30 @@ defmodule BitArb.BankTest do
 
   test "it buys (amount_to_purchase / unit_price) units" do
     {{:ok, _buy_price, amount_bought}, _updated_holdings} =
-      BitArb.Bank.retrive_amount_from_holding(@holdings, :a, @unit_price, @amount_to_purchase)
+      BitArb.Bank.retrieve_amount_from_holding(@holdings, :a, @unit_price, @amount_to_purchase)
 
     assert amount_bought == 3
   end
 
   test "it subtracts the amount_to_purchase from the holding" do
     {{:ok, _buy_price, _amount_bought}, updated_holdings} =
-      BitArb.Bank.retrive_amount_from_holding(@holdings, :a, @unit_price, @amount_to_purchase)
+      BitArb.Bank.retrieve_amount_from_holding(@holdings, :a, @unit_price, @amount_to_purchase)
 
     assert updated_holdings[:a] == 3.964
   end
 
-  test "it respondes with :insufficient_funds when there isn't enough money in the holding" do
+  test "it responds with :insufficient_funds when there isn't enough money in the holding" do
     holdings = [a: 0]
 
     assert {:insufficient_funds, _updated_holdings} =
-      BitArb.Bank.retrive_amount_from_holding(holdings, :a, @unit_price, @amount_to_purchase)
+      BitArb.Bank.retrieve_amount_from_holding(holdings, :a, @unit_price, @amount_to_purchase)
   end
 
   test "it doesn't change the holdings when there isn't enough money in the holding" do
     holdings = [a: 0]
 
     {:insufficient_funds, updated_holdings} =
-      BitArb.Bank.retrive_amount_from_holding(holdings, :a, @unit_price, @amount_to_purchase)
+      BitArb.Bank.retrieve_amount_from_holding(holdings, :a, @unit_price, @amount_to_purchase)
 
     assert updated_holdings == holdings
   end
