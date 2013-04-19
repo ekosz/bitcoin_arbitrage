@@ -4,27 +4,36 @@ defmodule BitArb.OTP.ExchangeRatePoller do
   # 1 hour in milliseconds
   @update_time 1000 * 60 * 60
 
-  defrecord State, rates: [], timer: nil
+  defrecord State, rates: [], timer: nil, timer_mod: nil, exchange_rater: nil
 
   ### API
 
-  def start_link do
-    :gen_server.start_link({:local, __MODULE__}, __MODULE__, [], [])
+  def start_link(name // __MODULE__,
+                 timer // :timer,
+                 exchange_rater // BitArb.ExchangeRateGetter) do
+
+    :gen_server.start_link({:local, name}, __MODULE__, [timer, exchange_rater], [])
   end
 
-  def rate(symbol) do
-    :gen_server.call(__MODULE__, {:rate, symbol})
+  def rate(symbol, name // __MODULE__) do
+    :gen_server.call(name, {:rate, symbol})
   end
 
-  def rates do
-    :gen_server.call(__MODULE__, :rates)
+  def rates(name // __MODULE__) do
+    :gen_server.call(name, :rates)
+  end
+
+  def stop(name // __MODULE__) do
+    :gen_server.call(name, :stop)
   end
 
   ### OTP Callbacks
 
-  def init([]) do
-    {rates, timer} = update_rates
-    {:ok, State[rates: rates, timer: timer]}
+  def init([timer_mod, exchange_rater]) do
+    {rates, timer} = update_rates(timer_mod, exchange_rater)
+
+    {:ok, State[rates: rates, timer: timer,
+                timer_mod: timer_mod, exchange_rater: exchange_rater]}
   end
 
   def handle_call(:rates, _from, State[rates: rates] = state) do
@@ -35,14 +44,18 @@ defmodule BitArb.OTP.ExchangeRatePoller do
     {:reply, get_rate(rates, symbol), state}
   end
 
-  def handle_info(:update_rates, _state) do
-    {rates, timer} = update_rates
+  def handle_call(:stop, _from, state) do
+    {:stop, :normal, :ok, state}
+  end
+
+  def handle_info(:update_rates, state) do
+    {rates, timer} = update_rates(state.timer_mod, state.exchange_rater)
     {:noreply, State[rates: rates, timer: timer]}
   end
 
-  defp update_rates do
-    rates = BitArb.ExchangeRateGetter.get_current
-    {:ok, timer} = :timer.send_after(@update_time, :update_rates) # Loop forever
+  defp update_rates(timer_mod, exchange_rater) do
+    rates = exchange_rater.get_current
+    {:ok, timer} = timer_mod.send_after(@update_time, :update_rates) # Loop forever
     {rates, timer}
   end
 
