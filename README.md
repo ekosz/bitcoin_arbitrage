@@ -13,9 +13,9 @@ Example
 
 Lets say we have three numbers
 
-1) The current Bitcoin to USD is $100
-2) The current Bitcoin to EUR is €60
-3) The current USD to EUR is €0.70
+1. The current Bitcoin to USD is $100
+2. The current Bitcoin to EUR is €60
+3. The current USD to EUR is €0.70
 
 Now in a perfect economy all of these currencies would have the same value to
 one another, but if you look closely the current Bitcoin to EUR is under priced
