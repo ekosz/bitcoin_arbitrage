@@ -19,8 +19,8 @@ defmodule BitArb.JSONGetter do
 
   defp do_get(url, http) do
     handle_response http.request(:get, {url, []},
-                                 [{:timeout, 3000}, {:connect_timeout, 3000}],
-                                 [{:body_format, :binary}])
+                                 [timeout: 3000 , connect_timeout: 3000],
+                                 [body_format: :binary])
   end
 
   @doc """
@@ -29,8 +29,8 @@ defmodule BitArb.JSONGetter do
   """
   def post(url, data, headers, http // :httpc) do
     handle_response http.request(:post, {url, headers, 'application/x-www-form-urlencoded; charset=UTF-8', data},
-                                 [{:timeout, 3000}, {:connect_timeout, 3000}, {:ssl,[{:verify,0}]}],
-                                 [{:body_format, :binary}])
+                                 [timeout: 3000, connect_timeout: 3000, ssl: [verify: 0]],
+                                 [body_format: :binary])
   end
 
   defp handle_response({:ok, {{_, 200, _}, _headers, ""}}) do
