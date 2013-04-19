@@ -4,51 +4,66 @@ defmodule BitArb.OTP.MtgoxPoller do
   # 15 seconds in milliseconds
   @update_time 1000 * 15
 
-  defrecord State, prices: [], timer: nil
+  defrecord State, prices: [], timer: nil, timer_mod: nil, mtgox_getter: nil
 
   ### API
 
-  def start_link do
-    :gen_server.start_link({:local, __MODULE__}, __MODULE__, [], [])
+  def start_link(name // __MODULE__,
+                 timer // :timer,
+                 mtgox_getter // BitArb.MtgoxGetter) do
+
+    :gen_server.start_link({:local, name}, __MODULE__, [timer, mtgox_getter], [])
   end
 
-  def price(symbol) when is_list(symbol) do
-    price list_to_atom(symbol)
+  def price(symbol, name // __MODULE__) do
+    do_price(symbol, name)
   end
 
-  def price(symbol) when is_binary(symbol) do
-    price binary_to_atom(symbol)
+  defp do_price(symbol, name) when is_list(symbol) do
+    do_price list_to_atom(symbol), name
   end
 
-  def price(symbol) when is_atom(symbol) do
+  defp do_price(symbol, name) when is_binary(symbol) do
+    do_price binary_to_atom(symbol), name
+  end
+
+  defp do_price(symbol, name) when is_atom(symbol) do
     try do
-      Keyword.get! prices(), symbol
+      Keyword.get! prices(name), symbol
     rescue KeyError ->
       throw :price_not_ready
     end
   end
 
-  def prices do
-    :gen_server.call(__MODULE__, :prices, 60_000) # Wait up to 1 min
+  def prices(name // __MODULE__) do
+    :gen_server.call(name, :prices, 60_000) # Wait up to 1 min
+  end
+
+  def stop(name // __MODULE__) do
+    :gen_server.call(name, :stop)
   end
 
   ### OTP Callbacks
 
-  def init([]) do
+  def init([timer_mod, mtgox_getter]) do
     self <- :update_prices
 
-    {:ok, State[prices: []]}
+    {:ok, State[prices: [], timer_mod: timer_mod, mtgox_getter: mtgox_getter]}
   end
 
   def handle_call(:prices, _from, State[prices: prices] = state) do
     {:reply, prices, state}
   end
 
+  def handle_call(:stop, _from, state) do
+    {:stop, :normal, :ok, state}
+  end
+
   def handle_info(:update_prices, state) do
     updated_prices = Enum.reduce BitArb.traded_symbols, state.prices, fn(symbol, prices) ->
       try do
-        :timer.sleep 1000
-        Keyword.put prices, binary_to_atom(symbol), BitArb.MtgoxGetter.btc_to(symbol)
+        state.timer_mod.sleep 1000
+        Keyword.put prices, binary_to_atom(symbol), state.mtgox_getter.btc_to(symbol)
       catch
         :empty_body -> prices
         :timeout -> prices
@@ -56,7 +71,7 @@ defmodule BitArb.OTP.MtgoxPoller do
       end
     end
 
-    {:ok, timer} = :timer.send_after(@update_time, :update_prices) # Loop forever
+    {:ok, timer} = state.timer_mod.send_after(@update_time, :update_prices) # Loop forever
 
     {:noreply, State[prices: updated_prices, timer: timer]}
   end
