@@ -9,10 +9,10 @@ defmodule BitArb.OTP.MtgoxPoller do
   ### API
 
   def start_link(name // __MODULE__,
-                 timer // :timer,
+                 timer_mod // :timer,
                  mtgox_getter // BitArb.MtgoxGetter) do
 
-    :gen_server.start_link({:local, name}, __MODULE__, [timer, mtgox_getter], [])
+    :gen_server.start_link({:local, name}, __MODULE__, [timer_mod, mtgox_getter], [])
   end
 
   def price(symbol, name // __MODULE__) do
@@ -43,12 +43,16 @@ defmodule BitArb.OTP.MtgoxPoller do
     :gen_server.call(name, :stop)
   end
 
+  def state(name // __MODULE__) do
+    :gen_server.call(name, :state)
+  end
+
   ### OTP Callbacks
 
   def init([timer_mod, mtgox_getter]) do
     self <- :update_prices
 
-    {:ok, State[prices: [], timer_mod: timer_mod, mtgox_getter: mtgox_getter]}
+    {:ok, State[timer_mod: timer_mod, mtgox_getter: mtgox_getter]}
   end
 
   def handle_call(:prices, _from, State[prices: prices] = state) do
@@ -57,6 +61,10 @@ defmodule BitArb.OTP.MtgoxPoller do
 
   def handle_call(:stop, _from, state) do
     {:stop, :normal, :ok, state}
+  end
+
+  def handle_call(:state, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_info(:update_prices, state) do
@@ -71,9 +79,13 @@ defmodule BitArb.OTP.MtgoxPoller do
       end
     end
 
-    {:ok, timer} = state.timer_mod.send_after(@update_time, :update_prices) # Loop forever
+    state = state.prices(updated_prices)
 
-    {:noreply, State[prices: updated_prices, timer: timer]}
+    {:ok, next_timer} = state.timer_mod.send_after(@update_time, :update_prices) # Loop forever
+
+    state = state.timer(next_timer)
+
+    {:noreply, state}
   end
 
 end

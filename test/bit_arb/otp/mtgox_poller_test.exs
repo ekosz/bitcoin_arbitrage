@@ -44,4 +44,8 @@ defmodule BitArb.OTP.MtgoxPollerTest do
 
     assert caught == :price_not_ready
   end
+
+  test "it keeps its timer_mod between updates" do
+    assert BitArb.OTP.MtgoxPoller.state(:mtgox_poller_test).timer_mod == FakeTimer
+  end
 end
