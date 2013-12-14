@@ -14,7 +14,7 @@ defmodule BitArb.JSONGetter do
   end
 
   defp do_get(url, http) when is_binary(url) do
-    do_get( binary_to_list(url), http )
+    do_get( String.to_char_list!(url), http )
   end
 
   defp do_get(url, http) do

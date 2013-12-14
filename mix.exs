@@ -18,8 +18,8 @@ defmodule BitArb.Mixfile do
   end
 
   defp deps do
-    [ { :erlsha2, %r(.*), github: "vinoski/erlsha2" },
-      { :exlager, %r(.*), github: "khia/exlager" },
-      { :jsx,"1.3.3",[github: "talentdeficit/jsx", tag: "v1.3.3"]} ]
+    [ { :erlsha2, github: "vinoski/erlsha2" },
+      { :exlager, github: "khia/exlager" },
+      { :jsx, github: "talentdeficit/jsx"} ]
   end
 end

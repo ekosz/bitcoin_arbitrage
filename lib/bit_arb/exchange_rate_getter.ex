@@ -28,7 +28,7 @@ defmodule BitArb.ExchangeRateGetter do
 
   defp important_symbols(rates) do
     Enum.filter rates, fn({symbol, _val}) ->
-      List.member? BitArb.traded_symbols, symbol
+      Enum.member? BitArb.traded_symbols, symbol
     end
   end
 
