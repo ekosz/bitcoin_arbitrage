@@ -1,5 +1,5 @@
 [ "erlsha2": {:git, "git://github.com/vinoski/erlsha2.git", "c8cc57b1e2a5e92208a51c03aa1bae7eeb9b9338", []},
   "exlager": {:git, "git://github.com/khia/exlager.git", "0b840aae773e6eb6de7cdbb703b47031b6608bfb", []},
   "genx": {:git, "https://github.com/yrashk/genx", "1a37f862edba8a8bec342ae4945fac623f2e49ab", []},
-  "jsx": {:git, "git://github.com/talentdeficit/jsx.git", "cb14b92a228e51f7bdcaa7eb17f035e4a5c0b47d", []},
+  "jsx": {:git, "git://github.com/talentdeficit/jsx.git", "cb14b92a228e51f7bdcaa7eb17f035e4a5c0b47d", [{:tag, "v1.3.3"}]},
   "lager": {:git, "https://github.com/basho/lager.git", "a0adf8c554fd6ecfc7effd7a93e589cd69edcd23", []} ]
