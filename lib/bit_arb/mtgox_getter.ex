@@ -46,7 +46,7 @@ defmodule BitArb.MtgoxGetter do
   end
 
   defp do_btc_to(symbol, getter) when is_binary(symbol) do
-    do_btc_to binary_to_list(symbol), getter
+    do_btc_to String.to_char_list!(symbol), getter
   end
 
   defp do_btc_to(symbol, getter) when is_atom(symbol) do
@@ -82,7 +82,7 @@ defmodule BitArb.MtgoxGetter do
   end
 
   defp nonce do
-    binary_to_list "nonce=#{BitArb.now_in_millseconds}"
+    String.to_char_list! "nonce=#{BitArb.now_in_millseconds}"
   end
 
   defp mtox_headers(hmac) do

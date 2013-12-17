@@ -29,7 +29,7 @@ defmodule BitArb.OTP.MtgoxPoller do
 
   defp do_price(symbol, name) when is_atom(symbol) do
     try do
-      Keyword.get! prices(name), symbol
+      Dict.fetch! prices(name), symbol
     rescue KeyError ->
       throw :price_not_ready
     end

@@ -8,7 +8,7 @@ defmodule BitArb.JSONGetterTest do
   test "it parses the JSON results" do
     defmodule GoodRequest do
       def request(_method, {'google', []}, _http_opts, _opts) do
-        {:ok, {{:x, 200, :x}, :headers, %b({"result":"success"})}}
+        {:ok, {{:x, 200, :x}, :headers, %s({"result":"success"})}}
       end
     end
 
